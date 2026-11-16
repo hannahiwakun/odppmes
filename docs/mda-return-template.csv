@@ -1,0 +1,67 @@
+section,field
+A,Name of MDA
+A,Name of initiative
+A,Code
+A,Sector
+A,Geographical coverage
+A,Nature of initiative
+A,Date of commencement
+A,Expected completion date
+A,Current status
+B,Development partner
+B,Type of partner
+B,Funding institution if different
+B,Nature of assistance
+B,Funding arrangement
+B,Agreement or approval date
+B,Currency
+C,Objectives
+C,Key activities
+C,Lead implementing MDA
+C,Other delivering agencies
+C,Other participating MDAs
+C,Supervising political head
+C,Coordination arrangements
+C,State priority
+D,Direct beneficiaries
+D,Indirect beneficiaries
+D,Beneficiary groups
+D,LGAs covered
+D,Expected outcomes
+D,Beneficiary figures are estimates
+E,Total approved value
+E,Development partner contribution
+E,Federal contribution
+E,Ondo State contribution
+E,Other contributions
+E,Counterpart funding required
+E,Counterpart funding paid
+E,Counterpart still unpaid
+E,Funds drawn down
+E,Cumulative expenditure
+E,Date of financial figures
+E,Source of financial figures
+E,Exchange rate
+E,Exchange rate date
+F,Implementation status
+F,Approved start
+F,Approved end
+F,Physical progress percent
+F,Financial progress
+F,Achievements
+F,Outstanding activities
+F,Challenges
+F,Government action required
+F,Next milestone
+F,Date of progress update
+G,Programme officer
+G,Designation
+G,Department
+G,Official phone
+G,Official email
+G,Supervising director
+G,MDA focal person
+G,Alternate focal person
+G,Date of submission
+H,Reporting officer
+H,Authorising officer

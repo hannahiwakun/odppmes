@@ -5,6 +5,18 @@
 
     RewriteEngine On
 
+    # Send plain HTTP requests to the HTTPS portal before Laravel runs.
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://odppmes-acceptance.test%{REQUEST_URI} [L,R=301,QSA]
+
+    RewriteRule ^storage(?:/|$) - [F,L]
+
+    # Documents stay on disk for the application download route.
+    # Direct public URLs are refused so a file name is not enough to read them.
+    RewriteRule ^storage/project_documents(/|$) - [F,L]
+    RewriteRule ^storage/project_photos(/|$) - [F,L]
+    RewriteRule ^storage/monitorings(/|$) - [F,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

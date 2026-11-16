@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AuditLogger;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -48,9 +50,34 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        if ($user->isSuperAdmin() && ! $user->anotherSuperAdministratorExists()) {
+            return back()->withErrors([
+                'password' => 'This account was not deleted because it is the last Super Administrator.',
+            ], 'userDeletion');
+        }
 
-        $user->delete();
+        $blocked = $user->deletionBlockers();
+
+        if ($blocked !== []) {
+            return back()->withErrors([
+                'password' => 'This account was not deleted because it still has '.implode(', ', $blocked).'.',
+            ], 'userDeletion');
+        }
+
+        DB::transaction(function () use ($user) {
+            AuditLogger::log(
+                'Deleted',
+                'User',
+                'Deleted user: '.$user->name
+            );
+
+            $user->delete();
+        });
+
+        // Logout saves a remember token. Clear it first so the deleted account is not created again.
+        $user->setRememberToken(null);
+
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

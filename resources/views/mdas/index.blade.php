@@ -1,111 +1,133 @@
 @extends('layouts.admin')
 
-@section('title','MDAs')
+@section('title', 'MDAs')
 
 @section('content')
 
 @if(session('success'))
-<div style="background:#d1fae5;padding:12px;border-radius:6px;margin-bottom:20px;color:#065f46;">
-    {{ session('success') }}
-</div>
+    <div class="mb-5 rounded-lg border border-green-400 bg-green-100 px-4 py-3 text-green-800" role="status">
+        {{ session('success') }}
+    </div>
 @endif
 
-<div class="flex justify-between mb-5">
-
-    <h2 class="text-2xl font-bold">
-        Ministries, Departments & Agencies
-    </h2>
-
-    <a href="{{ route('mdas.create') }}"
-       style="background:#15803d;color:white;padding:10px 18px;border-radius:6px;text-decoration:none;">
-        + Add New MDA
-    </a>
-
-</div>
-
-<table border="1" width="100%" cellpadding="10" cellspacing="0">
-
-<thead style="background:#166534;color:white;">
-
-<tr>
-
-<th>ID</th>
-<th>Name</th>
-<th>Code</th>
-<th>Email</th>
-<th>Phone</th>
-<th>Status</th>
-<th width="180">Action</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-@forelse($mdas as $mda)
-
-<tr>
-
-<td>{{ $mda->id }}</td>
-<td>{{ $mda->name }}</td>
-<td>{{ $mda->code }}</td>
-<td>{{ $mda->email }}</td>
-<td>{{ $mda->phone }}</td>
-
-<td>
-
-@if($mda->status)
-
-Active
-
-@else
-
-Inactive
-
+@if(session('error'))
+    <div class="mb-5 rounded-lg border border-red-400 bg-red-100 px-4 py-3 text-red-800" role="alert">
+        {{ session('error') }}
+    </div>
 @endif
 
-</td>
+<div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
 
-<td>
+    <div class="flex flex-col gap-4 border-b border-gray-200 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-green-900">MDA directory</h2>
+            <p class="mt-1 text-sm text-gray-600">Ministries, departments and agencies recorded for Ondo State. Open a profile for officers, projects and performance.</p>
+        </div>
 
-<a href="{{ route('mdas.edit',$mda) }}">Edit</a>
+        @can('create', App\Models\Mda::class)
+            <a href="{{ route('mdas.create') }}"
+               class="inline-flex items-center justify-center rounded-lg bg-green-700 px-5 py-2 text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2">
+                Add New MDA
+            </a>
+        @endcan
+    </div>
 
-|
+    <div class="overflow-x-auto">
+        <table class="min-w-full">
+            <thead class="bg-green-700 text-white">
+                <tr>
+                    <th class="px-4 py-3 text-left text-sm font-semibold" scope="col">Name</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold" scope="col">Code</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold" scope="col">Contact</th>
+                    <th class="px-4 py-3 text-center text-sm font-semibold" scope="col">Officers</th>
+                    <th class="px-4 py-3 text-center text-sm font-semibold" scope="col">Projects</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold" scope="col">Status</th>
+                    <th class="px-4 py-3 text-center text-sm font-semibold" scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @forelse($mdas as $mda)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-sm font-medium text-gray-900">
+                            <a href="{{ route('mdas.show', $mda) }}" class="text-green-800 underline">{{ $mda->name }}</a>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-700">{{ $mda->code }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-700">
+                            <div>{{ filled($mda->email) ? $mda->email : 'No email' }}</div>
+                            <div class="text-gray-500">{{ filled($mda->phone) ? $mda->phone : 'No phone' }}</div>
+                        </td>
+                        <td class="px-4 py-3 text-center text-sm text-gray-700">{{ $mda->officers_count }}</td>
+                        <td class="px-4 py-3 text-center text-sm text-gray-700">{{ $mda->projects_count }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            @if($mda->status)
+                                <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">Active</span>
+                            @else
+                                <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-700">Inactive</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex flex-wrap items-center justify-center gap-2">
+                                <a href="{{ route('mdas.show', $mda) }}"
+                                   class="rounded bg-green-700 px-3 py-1 text-sm text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2">
+                                    View
+                                </a>
 
-<form action="{{ route('mdas.destroy',$mda) }}"
-      method="POST"
-      style="display:inline;">
+                                @can('update', $mda)
+                                    <a href="{{ route('mdas.edit', $mda->id) }}"
+                                       class="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+                                        Edit
+                                    </a>
+                                @endcan
 
-@csrf
-@method('DELETE')
+                                @can('deactivate', $mda)
+                                    @if($mda->status)
+                                        <form action="{{ route('mdas.deactivate', $mda) }}"
+                                              method="POST"
+                                              class="inline"
+                                              onsubmit="return confirm('Deactivate this MDA? Its projects and records will be kept.');">
+                                            @csrf
+                                            @method('PATCH')
 
-<button onclick="return confirm('Delete this MDA?')">
-Delete
-</button>
+                                            <button type="submit"
+                                                    class="rounded bg-amber-700 px-3 py-1 text-sm text-white hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-700 focus:ring-offset-2">
+                                                Deactivate
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endcan
 
-</form>
+                                @can('delete', $mda)
+                                    <form action="{{ route('mdas.destroy', $mda->id) }}"
+                                          method="POST"
+                                          class="inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this MDA?');">
+                                        @csrf
+                                        @method('DELETE')
 
-</td>
+                                        <button type="submit"
+                                                class="rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endcan
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="px-4 py-12 text-center text-gray-500">
+                            No records found.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-</tr>
+    <div class="border-t border-gray-200 px-6 py-4">
+        {{ $mdas->links() }}
+    </div>
 
-@empty
-
-<tr>
-
-<td colspan="7" align="center">
-
-No records found.
-
-</td>
-
-</tr>
-
-@endforelse
-
-</tbody>
-
-</table>
+</div>
 
 @endsection
